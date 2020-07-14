@@ -38,6 +38,7 @@ function getLastetAll()
     return $all;
     // se tra ve cai doi tuong day
 }
+// hàm này để lấy ra tất cả sản phẩm từ bảng product
 function getAllProduct()
 {
     global $conn;
@@ -115,6 +116,7 @@ ORDER BY
     // tham so dau tien la cai tab id la nav-last
     return $all;
 }
+// hàm này dùng để lấy ra một sản phẩm với id product mình truyền vào
 function getSingleProduct($idProduct)
 {
     global $conn;
@@ -124,9 +126,18 @@ FROM
     `product`
 WHERE
     product_id = $idProduct";
+    // câu lệnh truy vấn này có ý nghĩa là :
+    // lấy ra các bản ghi trong bảng product với điều kiện product_id sẽ bằng một cái mã id mình truyền vô
+    // sao ở trên a lại kêu hàm này nó chỉ lấy ra đc một sản phẩm ??
+    // bởi vì product_id là khoá chính của table product
+    // mà mấy em biết là khoá chính thì nó sẽ không được trùng nhau trong một bảng
+    // nên với điều kiện như thế nó chỉ lấy ra một sản phẩm thôi hihi :))
     $result = mysqli_query($conn, $sql);
-    if ($result) {
+    // thực thi câu lệnh truy vấn ở trên và lấy về sản phẩm
+    if ($result) { // kiểm tra câu lệnh trên có thực thi đc hay không
         $product = mysqli_fetch_assoc($result);
+        // biến đổi kết quả trả về thành dạng array :  Array(tên field 1 -> giá trị 1 ,tên field 2 -> giá trị 2 )
+        // sau đó trả về cho chúng ta thông tin sản phẩm ấy <3
         return $product;
     }
 }

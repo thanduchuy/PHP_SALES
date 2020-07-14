@@ -33,14 +33,33 @@
 <?php
 include "header.php";
 include "control/productControl.php";
-$idProduct = $_GET['idProduct'];
+// đây là trang hiển thị thông tin sản phẩm
+// mỗi lần mấy em click vào một sản phẩm từ trang index nó sẽ chuyển qua trang này
+// đường link nó sẽ có dạng như sau : http://localhost:8080/sales/single-product.php?idProduct=13&count=1
+// giờ ở trong web nó sẽ có hai dạng truyền,gửi dữ liệu chính đó là GET và POST
+// ở trang này a sẽ dùng cái GET nó sẽ gửi và nhận dữ liệu ta thông qua các parameter của đường dẫn
+//  $_GET là một biến toàn cục trong php ta có thể thoải mái gọi ra
+// $_GET kiểu dữ liệu của nó sẽ là một mảng
+// nhìn trên đường dẫn a ví dụ ở trên thì mấy em có thể thấy có hai tham số
+// nên $_GET của ta sẽ là một cái mảng chứa giá trị của hai tham số trên
+$idProduct = $_GET['idProduct']; // sẽ trả về cho a cái mã sản phẩm
 $data = getSingleProduct($idProduct);
+// anh sẽ gọi hàm getSingleProduct này từ bên cái productControl
+// nó sẽ trả về cho a cái sản phẩm theo cái idProduct a ms nhận đc từ $_GET
 $count = number_format($_GET['count']);
+// sẽ trả về cho a cái số lượng sản phẩm a muốn mua mặc định ban đầu sẽ là 1
 if (isset($_GET['countPlus'])) {
     $count += 1;
 } else if (isset($_GET['countMinus'])) {
     $count -= 1;
 }
+// đây là nơi ta sẽ nhận đường link từ cái single product để xem mình đang tăng hay giảm sản phẩm
+// đường link này sẽ từ hai cái thẻ a (-) và (+) ở dưới
+// ở đây a dùng insset nó sẽ kiểm tra cái giá trị của a đã được khởi tạo hay chưa nó sẽ trả về true hoặc false
+// nếu cái đường dẫn có tham số countPlus thì nghĩa là mình đang muốn tăng số lượng
+// nó sẽ lấy số lượng hiện tại và cộng cho 1
+// nếu cái đường dẫn có tham số countMinus thì nghĩa là mình đang muốn giảm số lượng
+// nó sẽ lấy số lượng hiện tại và trừ cho 1
 ?>
 
     <!-- slider Area Start-->
@@ -66,7 +85,10 @@ if (isset($_GET['countPlus'])) {
       <div class="row justify-content-center">
         <div class="col-lg-12">
           <div class="product_img_slide owl-carousel">
+          <!-- cái sản phẩm mà a có được từ hàm getSingleProduct a đã lưu nó vào biến tên  data   -->
+            <!-- hiển thị hình ảnh của sản phẩm -->
             <div class="single_product_img">
+             <!-- khi anh echo cái data[image] nó sẽ trã về đường dẫn của sản phẩm ấy -->
               <img src=<?php echo $data['image'] ?> alt="#" class="img-fluid">
             </div>
             <div class="single_product_img">
@@ -75,30 +97,49 @@ if (isset($_GET['countPlus'])) {
             <div class="single_product_img">
               <img src=<?php echo $data['image'] ?> alt="#" class="img-fluid">
             </div>
+            <!-- vì cái trang ni cần có ba cái hình nên a phải truyền vào ba lần  -->
           </div>
         </div>
         <div class="col-lg-8">
           <div class="single_product_text text-center">
             <h3><?php echo $data['name'] ?></h3>
+            <!-- hiển thị tên của sản phẩm -->
             <p>
             <?php echo $data['content'] ?>
+             <!-- hiển thị mô tả của sản phẩm -->
             </p>
             <div class="card_area">
                 <div class="product_count_area">
                     <p>Quantity</p>
                     <div class="product_count d-inline-block">
                     <span class="product_count_item inumber-decrement">
+                    <!-- đây là chổ tăng hoặc giảm số lượng sản phẩm -->
+                    <!-- nó sẽ gửi lại một đường dẫn tới trang single-product này -->
+                    <!-- và sử dụng $_GET để có thể biết ta đang tăng hay giảm số lượng -->
                     <a href='single-product.php?idProduct=<?php echo $idProduct ?>&countMinus=true&count=<?php echo $count ?>' style="color:black;" ><i class="ti-minus"></i></a>
+                     <!-- đây là cái thẻ link để giảm số luợng sản phẩm -->
+                     <!-- đường dẫn nó sẽ có 3 tham số  -->
+                     <!-- 1/ mã sản phẩm (idProduct)   -->
+                     <!-- 2/ là cái tham số để cho ta biết mình đang muốn giảm sản phẩm (countMinus)   -->
+                     <!-- 3/ số lượng sản phẩm hiện tại (count)    -->
                     </span>
                         <input class="product_count_item input-number" type="text" value=<?php echo $count ?> min="1" max="10">
+                         <!-- hiển thị số lượng sản phẩm với điều kiện là nhỏ nhất là 1 sản phẩm lớn nhất là 10 sản phẩm   -->
                     <a href='single-product.php?idProduct=<?php echo $idProduct ?>&countPlus=true&count=<?php echo $count ?>' style="color:black;" ><span class="product_count_item number-increment"> <i class="ti-plus"></i></span></a>
+                      <!-- đây là cái thẻ link để tăng số luợng sản phẩm -->
+                     <!-- đường dẫn nó sẽ có 3 tham số  -->
+                     <!-- 1/ mã sản phẩm (idProduct)   -->
+                     <!-- 2/ là cái tham số để cho ta biết mình đang muốn tăng sản phẩm (countPlus)   -->
+                     <!-- 3/ số lượng sản phẩm hiện tại (count)    -->
                     </div>
                     <p>$<?php echo ($data['price'] * $count) ?></p>
+                    <!-- hiển thị giá cuối cùng của sản phẩm = giá sản phẩm * số lượng sản phẩm   -->
                 </div>
               <div class="add_to_cart">
                   <a href="control/addProduct.php?quanlity=<?php echo $count ?>&price=<?php echo $data['price'] ?>&image=<?php echo $data['image'] ?>&idP=<?php echo $data['product_id'] ?>&name=<?php echo $data['name'] ?>" class="btn_3">
                   add to cart
                   </a>
+                  <!-- chuyển sang trang add product để thêm sản phẩm   -->
               </div>
             </div>
           </div>
