@@ -1,31 +1,65 @@
 <?php
 include "control/connectDB.php";
 $nameRe = $passRe = $repassRe = $errorRe = '';
+// đây là nơi khai báo các biến a sẽ hiển thị ở trang register.php
+// nameRe (tên tài khoản)
+// passRe (mật khẩu )
+// repassRe (nhập lại mật khẩu)
+// errorRe (lỗi khi đăng kí )
 $nameLg = $passLg = $errorLg = '';
 $user = "";
-function registerUser()
+function registerUser() // đây là hàm thực hiện việc đăng ký tài khoản
+
 {
-    global $nameRe;
+    global $nameRe; // ta dùng global để có thể dùng được biến toàn cục trong hàm của ta
     global $passRe;
     global $repassRe;
     global $errorRe;
     if (isset($_POST['btnRegister'])) {
+        // nếu người dùng click vào button đăng ký thì nó mới được thực hiện
         $nameRe = $_POST['name'];
         $passRe = $_POST['password'];
         $repassRe = $_POST['rePassword'];
+        // ta sẽ dùng $_POST một biến toàn cục trong php nó sẽ trả về một cái mảng
+        // ta chỉ cần gọi đến các key của các phần tử trong mảng
+        // thì nó sẽ trả về cho ta value của các phần tử ấy
+        // ta sẽ lấy ra tên , mật khẩu và mật khẩu nhập lại để có thể kiểm tra
         if (empty($nameRe) || empty($passRe) || empty($repassRe)) {
+            // empty sẽ kiểm tra chuỗi có rổng hay không
+            // do ở trên ta lấy ra value từ post gửi về
+            // nếu post gửi về rổng thì chứng tỏ người dùng đã bỏ qua một cái input nào đó
             $errorRe = "Không được bỏ trống trường nào.";
+            // nên nó sẽ gán giá trị của biến errorRe lại thành cái dòng lỗi kia
+            // để hiển thị cho người dùng thấy
         } else {
             if (strlen($passRe) < 6) {
+                // strlen sẽ trả về độ dài của một chuỗi
+                // nên nếu độ dài của chuỗi password là nhỏ hơn 6 thì nó sẽ báo lỗi
+                // độ dài của mật khẩu bặt buộc phải trên 6 ký tự
                 $errorRe = "Mật khẩu phải lớn hơn 6 ký tự";
+                // và nó sẽ cập nhật lại lỗi và thông báo cho người dùng
             } else {
                 if ($passRe == $repassRe) {
+                    // nếu hai cái mật khẩu giống nhau thì ta tiếp tục kiểm tra
+                    // giờ hãy lướt xuống dưới và xem checkAccount ra sao nhé hihi
                     if (checkAccount($nameRe, $passRe) > 0) {
+                        // nếu số dòng trả về lớn hơn 0 chứng tỏ trong table user
+                        // đã tồn tại cái nick này rồi
+                        // nên ta sẽ không cho nó đăng ký nick này nữa
+                        // cập nhật lại lỗi ở bién $errorRe và hiển thị cho người dùng thấy
                         $errorRe = "Tài khoản đã tồn tại";
                     } else {
+                        // nếu tài khoản này chưa có ai đăng ký
+                        // thì nó sẽ cho phép ta tạo tài khoản
                         createAccount($nameRe, $passRe);
+                        // gọi hàm createAccount truyền vào hai tham số cho nó
+                        // chính là tên và mật khẩu của caí nick định tạo
+                        // rồi ta hãy xuống xem hàm createAccount thôi nào :v
                     }
                 } else {
+                    // ở register sẽ có nhập lại mật khẩu
+                    // nên nếu mật khẩu và mật khẩu nhập lại không giống nhau thì
+                    // nó sẽ thông báo lỗi cho ta
                     $errorRe = "Mật khẩu nhập lại không đúng";
                 }
             }
@@ -34,26 +68,43 @@ function registerUser()
 }
 function checkAccount($name, $pass)
 {
+    // hàm này sẽ kiểm tra xem tài khoản bạn định đăng ký
+    // tên tài khoản đã có ai dùng hay chưa :)
     global $conn;
     global $user;
     $sql = "SELECT * FROM `user` WHERE name='$name' AND pass='$pass'";
+    // sử dụng câu lệnh select để lấy ra tất cả bản ghi trong table user
+    // với điều kiện name và pass phải giống với hai cái biến ta truyền vào
+    // ở hàm này ta truyền vào hai biến
+    // hai biến đó chính là tên tk và mật khẩu bạn định đăng ký
+    // ta sẽ lấy hai biến này để tìm trong csdl có ai trùng với hai biến này hay không
     $result = mysqli_query($conn, $sql);
+    // thực thi câu truy vấn này ta đc kết quả
     $num = mysqli_num_rows($result);
-
+    // sau đó ta đếm số dòng của kết quả mới thu đc
     $u = mysqli_fetch_assoc($result);
     if ($num > 0) {
         $user = $u['name'];
     }
     return $num;
+    // và trả về số dòng đó
 }
 function createAccount($name, $pass)
 {
     global $conn;
     $sql = "INSERT INTO `user`(`name`, `pass`)
     VALUES('$name', '$pass')";
+    // hàm này đơn giản chỉ là tạo tài khoản thôi
+    // nên ta sẽ sài câu lệnh insert để thêm một bản ghi mới vào
+    // trong cái table user để có thể tạo tài khoản hihi
     mysqli_query($conn, $sql);
+    // thực hiện câu truy vấn trên
     if (mysqli_query($conn, $sql)) {
+        // nếu câu trên truy vấn thành công thì ta sẽ chuyển sang trang login
+        // để người dùng có thể đăng nhập tài khoản vừa mới tạo
         header('Location:login.php');
+        // header (Location : ,,, ) nó sẽ cho ta thay đổi đường dẫn hiện tại của ta
+        // giúp ta chuyển sang trang khác theo ý thích của ta
     }
 }
 function loginAccount()

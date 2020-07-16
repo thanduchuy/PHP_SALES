@@ -27,10 +27,14 @@
 <body>
 <?php
 ob_start();
+//  ob_start sẽ khởi động quá trình bắt đầu ghi cache.
+// Những gì mà máy chủ tính toán xử lý  sau hàm này và xuất kết quả ra sẽ được lưu vào bộ nhớ đệm
 include "header.php";
 include "control/loginControl.php";
 registerUser();
 ob_end_flush();
+// ob_end_flush cũng tương tự như ob_end_clean nhưng trước khi giải phóng bộ nhớ đệm,
+// nó sẽ gửi kết quả đến cho browser một lần nữa.
 ?>
 
     <!-- slider Area Start-->
@@ -69,10 +73,22 @@ ob_end_flush();
                         <div class="login_part_form_iner">
                             <h3>Welcome To ! <br>
                                 Please Sign Up now</h3>
+                            <!-- đến trang này ta sẽ bắt đầu tương tác với form trong php -->
+                            <!-- ở đây chúng ta sẽ không dùng đến Get để gửi dữ liệu nữa -->
+                            <!-- mà ta sẽ dùng Post để có thể gửi và nhận dữ liệu -->
+                            <!-- Post sẽ gửi dữ liệu thông qua form nên dữ liệu của nó sẽ bị ẩn đi-->
+                            <!-- Tại sao ở đây a lại dùng Post mà lại không dùng Get -->
+                            <!-- Get nó sẽ lấy dữ liệu ở trên url nên nó sẽ rất kém bảo mật -->
+                            <!-- với những cái liên quan đến đăng nhập,thanh toán thì ta không nên -->
+                            <!-- đụng tới cái Get mà hãy dùng đến Post để tăng tính bảo mật -->
                             <form class="row contact_form" method="post" novalidate="novalidate">
+                            <!-- ở thẻ form nếu muốn dùng post hay get ta chỉ cần thay đổi chổ method -->
                                 <div class="col-md-12 form-group p_star">
                                     <input type="text" class="form-control" id="name" name="name" value="<?php echo $nameRe ?>"
                                         placeholder="Username">
+                                    <!-- ở đây a sẽ gán value cho thẻ input bằng một cái biến a tạo trong loginControl -->
+                                    <!-- nó sẽ có nhiệm vụ như khi a đăng ký bị sai nó sẽ không mất đi hết tất cả những gì a vừa ghi -->
+                                    <!-- mà nó sẽ vần còn a chỉ việc sửa lại sao cho đúng yêu cầu là đc -->
                                 </div>
                                 <div class="col-md-12 form-group p_star">
                                     <input type="password" class="form-control" id="password" name="password" value="<?php echo $passRe ?>"
@@ -82,11 +98,15 @@ ob_end_flush();
                                     <input type="password" class="form-control" id="password" name="rePassword" value="<?php echo $repassRe ?>"
                                         placeholder="Repeat Password">
                                 </div>
+                                <!-- ở chổ password và repassword thì cũng tương tự a cũng không muốn nó bị mất đi nên a sẽ gán giá trị của nó cho một cái biến -->
                                 <div class="col-md-12 form-group">
                                     <p><a href="#" class="text-danger"><?php echo $errorRe ?></a></p>
+                                    <!-- đây là nơi sẽ hiển thị ra những cái lỗi khi đăng ký của ta -->
+                                    <!-- như tên tk đã bị trùng hay mấy cái vấn đề khác -->
                                     <button type="submit" value="submit" class="btn_3" name='btnRegister'>
                                         Register
                                     </button>
+                                      <!-- đây là btn có type là submit nên khi click nó sẽ gửi dữ liệu thông qua form tới sever để xử lý  -->
                                 </div>
                             </form>
                         </div>
