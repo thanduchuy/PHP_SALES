@@ -7,6 +7,8 @@ $nameRe = $passRe = $repassRe = $errorRe = '';
 // repassRe (nhập lại mật khẩu)
 // errorRe (lỗi khi đăng kí )
 $nameLg = $passLg = $errorLg = '';
+// biến để lưu giá trị từ form login.php
+// gồm tên tk , mật khẩu và cuối cùng là lỗi đăng nhập
 $user = "";
 function registerUser() // đây là hàm thực hiện việc đăng ký tài khoản
 
@@ -114,13 +116,37 @@ function loginAccount()
     global $errorLg;
     global $user;
     if (isset($_POST['btnLogin'])) {
+        // isset kiểm tra một cái biến đã được khởi tạo hay chưa
+        // ta sẽ dùng nó để xem người dùng đã bấm vào btn login
+        // để đăng nhập hay không
+        // nêú người dùng click button login để đăng nhập
+        // thì ta sẽ dùng $_POST để lấy ra các giá trị từ thẻ input bên trang login.php
         $nameLg = $_POST['nameLg'];
         $passLg = $_POST['passwordLg'];
         if (empty($nameLg) || empty($passLg)) {
+            // empty để kiểm tra xem giá trị hiện tại có rổng hay là không
+            // nếu người dùng không nhập một trong hai input thì ta sẽ thông báo
+            // lỗi cho người dùng biết
             $errorLg = "Không được bỏ trống trường nào.";
         } else {
+            // giờ nếu người dùng đã điền đầy đủ tên tk và mật khẩu
+            // ta sẽ lấy đc hai biến có giá trị là nameLg và passLg
+            // tại đây ta sẽ dùng lại hàm checkAccount để kiểm tra tên tài khoản và mật khẩu
+            // mấy em có nhớ checkAccount được dùng để kiểm tra xem tài khoản và mật khẩu
+            // có tồn tại ở trong table user hay là không
+            // nó sẽ trả về số các bản ghi khi ta truy vấn trong hàm này với điều kiện tk và mk
+            // như đã quy định từ trước nếu trả về lớn hơn 0 thì có nghĩa là :
+            // trong table user của ta có tài khoản và mật khẩu này có nghĩa là
+            // tài khoản và mật khẩu của người dùng vừa nhập là đúng
+            // nếu trả về là 0 thì có nghĩa là tài khoản hoặc mật khẩu không trùng với
+            // bản ghi nào trong table user cả
             if (checkAccount($nameLg, $passLg) > 0) {
                 $_SESSION['user'] = $user;
+                // $user chính là tên tài khoản
+                // tiến hành lưu user vào trong session để lưu phiên làm việc của người dùng
+                // khi ta thoát trang vào lại nó vẫn lưu sự đăng nhập
+                // mà không bắt ta phải đăng nhập lại
+                // sau đó dùng header để tiến hành chuyển trang sang trang chủ ...
                 header('Location:index.php');
             } else {
                 $errorLg = "Tài khoản hoặc mật khẩu không đúng";

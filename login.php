@@ -69,14 +69,22 @@ ob_end_flush();
                         <div class="login_part_form_iner">
                             <h3>Welcome Back ! <br>
                                 Please Sign in now</h3>
+                                <!-- đây chính là form đăng nhập của ta -->
+                                <!-- action # nghĩa là nó sẽ gửi form dữ liệu đến cái trang hiện tại chính là login.php-->
                             <form class="row contact_form" action="#" method="post" novalidate="novalidate">
                                 <div class="col-md-12 form-group p_star">
                                     <input type="text" class="form-control" id="name" name="nameLg" value="<?php echo $nameLg ?>"
                                         placeholder="Username">
+                                        <!-- input của cái tên đăng nhập  -->
+                                        <!-- nó có value là một cái biến ta tạo ra để lưu lại giá trị  -->
+                                        <!-- khi ta submit form thì sẽ không bị mất giá trị của input -->
                                 </div>
                                 <div class="col-md-12 form-group p_star">
                                     <input type="password" class="form-control" id="password" name="passwordLg" value="<?php echo $passLg ?>"
                                         placeholder="Password">
+                                        <!-- input mật khẩu của người dùng -->
+                                        <!-- Nó cũng sẽ được lưu giá trị khi ta bị lỗi như sai tên tk thì submit
+                                        nó sẽ không khiến ta bị mất dữ liệu đã nhập -->
                                 </div>
                                 <div class="col-md-12 form-group">
                                     <div class="creat_account d-flex align-items-center">
@@ -84,9 +92,13 @@ ob_end_flush();
                                         <label for="f-option">Remember me</label>
                                     </div>
                                     <p><a href="#" class="text-danger"><?php echo $errorLg ?></a></p>
+                                    <!-- Hiển thị những lỗi có thể xảy ra khi ta đăng nhập -->
+                                    <!-- Cho người dùng thấy -->
                                     <button type="submit" value="submit" class="btn_3" name="btnLogin">
                                         log in
                                     </button>
+                                    <!-- button submit để tiến hành đăng nhập vào trang của ta -->
+                                    <!-- nó sẽ gửi tên đăng nhập và mật khẩu và ta sẽ dùng loginControl.php để ta có thể kiểm tra đăng nhập -->
                                     <a class="lost_pass" href="#">forget password?</a>
                                 </div>
                             </form>
