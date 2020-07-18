@@ -2,6 +2,7 @@
 include "control/connectDB.php";
 function getAllCart($name)
 {
+    // hàm này để lấy ra toàn bộ sản phẩm trong giỏ hàng
     global $conn;
     $sql = "SELECT
     *
@@ -9,11 +10,38 @@ FROM
     `cart`
 WHERE
     cart.nameUser = '$name'";
+    // câu lện query này thì nó sẽ lấy ra tất cả bản ghi trong table cart
+    // với điều kiện nameUser = $name với name chính là tên người dùng
+    // thì với mỗi người dùng sẽ có giỏ hàng khác nhau không giống nhau được
+    // và nó sẽ thay đổi theo tên người dùng
     $result = mysqli_query($conn, $sql);
     $cart = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
+    // thực thi câu lệnh trên và lấy ra kết quả
+    // sau đó chuyển kết quả này sang array bằng mysqli_fetch_all
     mysqli_free_result($result);
+    // mysqli_free_result xoá kết qủa trong bộ nhớ để nhẹ web
     return $cart;
+    // trả về cart để show ra web cho người dùng thấy
+}
+function subTotalCart($cart)
+{
+    // hàm này để tính tổng tiền trong giỏ hàng
+    // ví dụ : giỏ hàng của trang
+    /*     tên sản phẩm        số lượng       giá
+    đầm bầu                2        300.000
+    chân váy               1        200.000
+     */
+    // thì tổng tiền trong giỏ hàng sẽ bằng số lượng * giá
+    // 2*300.000 + 1*200.000 = 800.000
+    $result = 0;
+    for ($i = 0; $i < count($cart); $i++) {
+        $result += $cart[$i]["quantity"] * $cart[$i]["price"];
+    }
+    // vòng lặp này sẽ chạy từ 0 đến count($cart) sẽ trả về độ dài của mảng
+    // $cart ni sẽ là mảng chứa các sản phẩm trong giỏ hàng
+    // nó sẽ đọc lần lượt các phần tử
+    // và tính tổng tiền của từng sản phẩm sau đó trả về để hiển thị trên web
+    return $result;
 }
 function checkProductToCart($nameCart, $nameuser)
 {
@@ -40,14 +68,7 @@ function deleteItemInCart($cartid)
     $sql = "DELETE FROM `cart` WHERE cart_id=$cartid ";
     $result = mysqli_query($conn, $sql);
 }
-function subTotalCart($cart)
-{
-    $result = 0;
-    for ($i = 0; $i < count($cart); $i++) {
-        $result += $cart[$i]["quantity"] * $cart[$i]["price"];
-    }
-    return $result;
-}
+
 function generateRandomString($length = 5)
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

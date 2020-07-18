@@ -28,9 +28,18 @@
 <?php
 include "header.php";
 include "control/cartControl.php";
-
+if (!isset($_SESSION['user'])) {
+    // isset là để kiểm tra biến kia đã đc khởi tạo hay chưa mà em thấy nó có dấu !
+    // thì từ true sẽ thành false và ngược lại
+    // kiểm tra nếu người dùng chưa đăng nhập
+    // thì ta sẽ không cho người dùng mua hàng
+    // và chuyển sang login bắt người dùng phải đăng nhập mới cho mua hàng
+    header('Location: /sales/login.php');
+}
 $cart = getAllCart($_SESSION['user']);
+// gọi hàm getAllCart từ cartControl.php để lấy ra các sản phẩm trong giỏ hàng của người dùng
 $total = subTotalCart($cart);
+// gọi hàm subTotalCart để tính được tổng số tiền trong giỏ hàng
 if (isset($_GET['err'])) {
     echo "<script type='text/javascript'>alert('Vui lòng chọn Shipping');</script>";
 }
@@ -95,20 +104,28 @@ if (isset($_GET['countPlus'])) {
               </tr>
             </thead>
             <tbody>
+            <!-- đây là vòng lặp để hiển thị ra các sản phẩm trong giỏ hàng -->
+            <!-- nó sẽ lặp lại các hàng tr trong table của html -->
+            <!-- để hiển thị ra các hàng của cái bảng cart này -->
               <?php foreach ($cart as $item) {?>
                 <tr>
                 <td>
                   <div class="media">
                     <div class="d-flex">
+                    <!-- mỗi lần lặp nó sẽ gán giá trị cho cái biến $item  -->
+                    <!-- theo mỗi phần tử trong mảng $cart của ta để hiển thị ra sản phẩm -->
                       <img src=<?php echo $item['image'] ?> alt="" />
+                    <!-- item[image] sẽ trả về cho ta đường dẫn của cái hình sản phẩm -->
                     </div>
                     <div class="media-body">
                       <p><?php echo $item['name'] ?></p>
+                      <!-- item[name] sẽ trả về cho ta tên  sản phẩm -->
                     </div>
                   </div>
                 </td>
                 <td>
                   <h5>$<?php echo $item['price'] ?></h5>
+                   <!-- item[price] sẽ trả về cho ta giá sản phẩm -->
                 </td>
                 <td>
                   <div class="product_count">
@@ -129,11 +146,13 @@ if (isset($_GET['countPlus'])) {
                     <a href="cart.php?countPlus=true&id=<?php echo $item['cart_id'] ?>" style="color:black;">
                     <span class="input-number-increment"> <i class="ti-plus"></i></span>
                     </a>
-
+                     <!-- đây là chính là nút tăng giảm số lượng của sản phẩm  -->
                   </div>
                 </td>
                 <td>
                   <h5>$<?php echo (number_format($item['quantity']) * number_format($item['price'])) ?></h5>
+                   <!-- hiển thị tổng tiền của sản phẩm   -->
+                    <!-- số lượng sản phẩm * giá sản phẩm  -->
                 </td>
               </tr>
               <?php }?>
@@ -145,6 +164,7 @@ if (isset($_GET['countPlus'])) {
                 </td>
                 <td>
                   <h5>$<?php echo $total ?></h5>
+                   <!-- hiển thị ra tổng tiền của giỏ hàng của người dùng  -->
                 </td>
               </tr>
               <tr class="shipping_area">
