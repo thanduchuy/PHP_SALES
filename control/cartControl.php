@@ -60,12 +60,17 @@ SET
     `quantity` = $quanlity
 WHERE
     cart_id = $cartid ";
+    // gọi câu lệnh query này sẽ thực hiện cập nhật lại số lượng sản phẩm với id
+    // chính là cái cartid mình truyền vào
+    // nó sẽ cập nhật với quanlity là cái quanlity mình truyền vào luôn
+    // trong cái bảng cart trong database của mình hihi
     $result = mysqli_query($conn, $sql);
 }
 function deleteItemInCart($cartid)
 {
     global $conn;
     $sql = "DELETE FROM `cart` WHERE cart_id=$cartid ";
+    // đơn giản chỉ là truyền vào cartid nó sẽ xoá cái bản ghi có id là cartid mình truyền vào ...
     $result = mysqli_query($conn, $sql);
 }
 

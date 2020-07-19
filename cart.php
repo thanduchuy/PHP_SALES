@@ -43,26 +43,54 @@ $total = subTotalCart($cart);
 if (isset($_GET['err'])) {
     echo "<script type='text/javascript'>alert('Vui lòng chọn Shipping');</script>";
 }
+// ở chổ tăng giảm số lượng sản phẩm
+// ta sẽ dùng get khi ta click vào btn nó sẽ là một thẻ a
+// thẻ a này sẽ liên kết đến trang cart này với đường link có hai tham số
+// đường link nó sẽ có dạng như thế này : /sales/cart.php?countPlus=true&id=11
+// tham số đầu tiên là kiểu để mình biết đc người dùng chọn tăng hay giảm số lượng
+// tham số thứ hai là id của sản phẩm ấy trong giỏ hàng
+// để ta có thể tăng giảm số lượng cho đúng sản phẩm
+// bởi vì một giỏ hàng có thể có nhiều sản phẩm
+// nên ta cần cái id để phân biệt giữa các sản phẩm trong giỏ hàng
 if (isset($_GET['countPlus'])) {
     $id = $_GET['id'];
+    // lấy ra tham số id từ url để lấy được id sản phẩm
+    // chạy vòng for lặp lại qua từng sản phẩm trong giỏ hàng
     for ($i = 0; $i < count($cart); $i++) {
         if ($cart[$i]['cart_id'] == $id) {
+            // sản phẩm nào có id bằng với id từ url truyền qua
+            // thì ta sẽ tiến hành cập nhật số lượng của sản phẩm
             updateQuanlity($id, number_format($cart[$i]['quantity']) + 1);
+            // gọi hàm này từ bên cartControl để cập nhật số lượng
+            // truyền vào hai tham số
+            // 1/ id sản phẩm cần chỉnh sửa
+            // 2/ số lượng sản phẩm = số lượng sản phẩm hiện tại + 1
             $cart = getAllCart($_SESSION['user']);
+            // sau đó tiền hành cập nhật lại giỏ hàng để nhận đc sự thay đổi
             $total = subTotalCart($cart);
+            // cập nhật lại luôn tổng tiền hàng
             break;
         }
     }
 } else if (isset($_GET['countMinus'])) {
     $id = $_GET['id'];
     for ($i = 0; $i < count($cart); $i++) {
+        // bên này cũng tương tự như trên nhưng mà có thêm vài cái khác khác xí thui :v
+        // như là khi số lượng sản phẩm đăng bằng 1 mà ta bấm giảm nữa
+        // thì nó sẽ  = 0 mà bằng 0 thì xoá sản phẩm ấy trong giỏ hàng luôn :D
+        // còn mà lớn hơn 1 thì nó mới giảm số lượng sản phẩm xuống 1 đơn vị
         if ($cart[$i]['cart_id'] == $id) {
             if (number_format($cart[$i]['quantity']) == 1) {
                 deleteItemInCart($cart[$i]['cart_id']);
+                // gọi hàm này ở bên cartControl nhận vào id sản phẩm và xoá nó đí :v
                 $cart = getAllCart($_SESSION['user']);
                 $total = subTotalCart($cart);
             } else {
                 updateQuanlity($id, number_format($cart[$i]['quantity']) - 1);
+                // gọi hàm này từ bên cartControl để cập nhật số lượng
+                // truyền vào hai tham số
+                // 1/ id sản phẩm cần chỉnh sửa
+                // 2/ số lượng sản phẩm = số lượng sản phẩm hiện tại - 1
                 $cart = getAllCart($_SESSION['user']);
                 $total = subTotalCart($cart);
                 break;
