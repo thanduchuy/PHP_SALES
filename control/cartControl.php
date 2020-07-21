@@ -88,7 +88,12 @@ function checkOut($carts)
 {
     global $conn;
     if (isset($_POST['btnCheckout'])) {
+        // nếu người dùng đã kiểm tra kĩ càng và chọn vào nút thanh toán ngay
+        // thì ta tiến hành thanh toán cho người dùng
         if (!isset($_POST['rule'])) {
+            // nếu người dùng chưa chọn vào cái chấp nhận điều khoản thì ta
+            // sẽ tiến hành thông báo cho người dùng thấy
+            // cái này a dùng js để tạo một cái alert thầy có hỏi mấy em thì kêu mò trên mạng :v
             echo "<script type='text/javascript'>alert('Vui lòng chấp nhận điều khoản');</script>";
         } else {
             $firstName = $_POST['firstName'];
@@ -104,9 +109,16 @@ function checkOut($carts)
             $subTotal = $_POST['subtotal'];
             $shipping = $_POST['shipping'];
             $user = $_SESSION['user'];
+            // lấy ra các thông tin ta đã nhập ở bên trang checkout ở cái form bên chi tiết thanh toán
+            // và ta cũng lấy ra name của user từ session để tiến hành thanh toán
+            // sau đó ta gọi hàm generateRandomString để tạo ra một cái id ngẫu nhiên có độ dài là 5
+            // để ta thêm id bên cái table checkout và detailCheckout
+            // hai cái này phải chung id nên ta ms phải tạo một cái id ngẫu nhiên
             $id = generateRandomString();
             if (empty($firstName) || empty($lastName) || empty($company) || empty($number) || empty($email) || empty($company) || empty($selectCountry) || empty($city) || empty($district) || !isset($pay) || empty($street)) {
                 echo "<script type='text/javascript'>alert('Không được để trống trường nào');</script>";
+                // nễu người dùng ko nhập một trong các trường ở bên chi tiết thanh toán
+                // thì nó sẽ thông báo cho người dùng biết
             } else {
                 $sql = "INSERT INTO `checkout`(
                 `id`,
@@ -126,10 +138,18 @@ function checkOut($carts)
             )
             VALUES('$id','$firstName','$lastName', '$company', '$number', '$email', '$selectCountry', '$city', '$district', '$street','$pay',$subTotal,$shipping,'$user') ";
                 $result = mysqli_query($conn, $sql);
+                // sau khi kiểm tra và tạo ra các biến cần thiết thì ta tiến hành
+                // thêm các biến đó vào trong tbale checkout để thành một cái bản ghi mới
                 if ($result) {
+                    // sau đó nếu câu lệnh insert ở trên của ta thành công thì ta tiến hành
+                    // hai công việc ở dưới này
+                    // cùng tìm hai cái hàm này ở cartControl để xem nó làm việc gì nhé <3
                     addDetailCheckout($id, $carts);
                     removeALLCart($carts);
                     header('Location:index.php?success=true');
+                    // sau đó chuyển trang này sang trang index với tham số success
+                    // để bên trang index hiện một cái thông báo
+                    // cho ta biết ta đã mua hàng thành công
                 }
             }
         }
@@ -138,19 +158,36 @@ function checkOut($carts)
 function removeALLCart($cart)
 {
     global $conn;
+    // hàm này có công việc là nó sẽ xoá hết tất cả sản phẩm trong giỏ hàng
+    // của người dùng thì sau khi thanh toán mấy cái món trong giỏ hàng rồi
+    // thì chắc chắn mấy cái món đó trong giỏ hàng sẽ bị mất đi rồi
+    // ở ngoài đời nó thế mà nhỉ :)
     foreach ($cart as $item) {
+        // sau đó chạy một vòng for
+        // lặp qua từng phần tử trong mảng cart để
+        // lấy ra từng id sản phẩm trong cart để ta có thể tiến hành xoá lần lượt từng
+        // phẩn tử trong nó
         $id = $item['cart_id'];
         $sql = "DELETE FROM `cart` WHERE cart_id=$id";
+        // gọi câu lệnh delete để xoá một bản ghi trong table cart
+        // với điều kiện cart_id sẽ bằng id sản phẩm mình đang lặp qua
         $result = mysqli_query($conn, $sql);
+        // thực thi câu lệnh với mysqli_query
     }
 }
 function addDetailCheckout($id, $cart)
 {
     global $conn;
+    // hàm này để thêm sản phẩm bên cái chi tiết giỏ hàng
+    // database của ta sẽ có hai cái checkout và detailCheckout
+    // table checkout sẽ chứa những thông tin cơ bản của người mua và tổng tiền người dùng phải thanh toán
+    // table detailCheckout sẽ chứa những sản phẩm người dùng đã mua trong lần thanh toán này
     foreach ($cart as $item) {
         $name = $item['name'];
         $quantity = $item['quantity'];
         $price = $item['price'];
+        // chạy một vòng for để tiến hành thêm mới các bản ghi
+        // vào trong table detailCheckout để lưu các sản phẩm người dùng đã mua
         $sql = "INSERT INTO `detailCheckout`( `idCheckout`, `quanlity`, `price`, `name`) VALUES ('$id',$quantity,$price,'$name')";
         $result = mysqli_query($conn, $sql);
     }

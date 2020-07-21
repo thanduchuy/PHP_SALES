@@ -29,15 +29,23 @@
 ob_start();
 include "header.php";
 include "control/cartControl.php";
-
+// khi ở bên trang cart sau khi kiểm tra kĩ càng sản phẩm trong giỏ hàng
+// và chọn hình thức shipping ta muốn
+// thì nó sẽ chuyển qua trang này checkout để tiền hành xác nhận lần cuối
+// và thêm những thông tin cần thiết cho việc giao hàng và mua hàng
 $cart = getAllCart($_SESSION['user']);
+// cái này là để lấy ra tất cả sản phẩm trong giỏ hàng để kiểm tra lần cuối cùng
 $total = subTotalCart($cart);
+// cũng lấy ra luôn tổng tiền trong giỏ hàng để kiểm tra
 if (isset($_GET['Result']) && isset($_GET['radio'])) {
     $radioVal = $_GET["radio"];
+    // cái này là để kiểm tra xem người dùng đã chọn hình thức shipping hay chưa
+    // nếu chưa thì ta sẽ quay ngược lại trang cart để thông báo cho người dùng biết
 } else {
     header('Location:cart.php?err=true');
 }
 checkOut($cart);
+// rồi ta qua trang cartControl để xem hàm này làm gì nhé :)
 ob_end_flush();
 ?>
 
@@ -63,6 +71,10 @@ ob_end_flush();
     <div class="container">
       <div class="billing_details">
         <form method="post">
+         <!-- form này sẽ có method là post nên nó sẽ gửi dữ liệu thông qua form -->
+         <!-- ở trong form này ở các thẻ input em để ý có cái atribute là name -->
+          <!-- nó dùng để phân biệt lẫn nhau các phần tử từ form gửi vô sever cho ta -->
+           <!-- khi ta cần lấy dữ liệu cái input nào thì ta chỉ cần gọi đúng cái name của nó thì nó sẽ trả về cho ta nội dung của thẻ input ấy -->
         <div class="row">
           <div class="col-lg-8">
             <h3>Chi tiết thanh toán</h3>
@@ -111,6 +123,8 @@ ob_end_flush();
                   </a>
                 </li>
                 <?php foreach ($cart as $item) {?>
+                <!-- vòng for này để hiển thị lại các sản phẩm trong giỏ hàng -->
+                <!-- cho người dùng kiểm tra lại lần cuối  -->
                 <li>
                   <a href="#"><?php echo $item['name'] ?>
                     <span class="middle">x<?php echo $item['quantity'] ?></span>
@@ -123,17 +137,21 @@ ob_end_flush();
                 <li>
                   <a href="#">Subtotal
                     <span >$<?php echo $total ?></span>
+                     <!-- hiển thị tổng tiền cần thanh toán trong giỏ hàng -->
                     <input name="subtotal" value=<?php echo $total ?> hidden/>
                   </a>
                 </li>
                 <li>
                   <a href="#">Shipping
+                  <!-- hiển thị tổng tiền của các sản phẩm trong giỏ hàng  -->
                     <span name='shipping'>Flat rate: $<?php echo $radioVal ?></span>
                     <input name="shipping" value=<?php echo $radioVal ?> hidden/>
                   </a>
                 </li>
                 <li>
                   <a href="#">Total
+                   <!-- hiển thị tổng tiền cần thanh toán trong giỏ hàng -->
+                    <!-- tổng tiền sản phẩm + phí ship -->
                     <span>$<?php echo $total + number_format($radioVal) ?></span>
                   </a>
                 </li>
