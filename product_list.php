@@ -32,7 +32,15 @@
 include "header.php";
 include "control/searchControl.php";
 $datas = [];
+// biến data để chứa các kết quả tìm kiếm trả về ...
 if (isset($_GET['Search']) && isset($_GET['btn_search'])) {
+    // đây chính là để bắt sự kiện ở header của ta
+    // ở trên phía cuối header mấy em có thấy một cái ô input search
+    // khi mấy em nhập tên sản phẩm và bấm vào btn có hình kính lúp
+    // thì nó sẽ gửi dữ liệu mấy em đã ghi và gửi nhẹ nó qua trang product_list này
+    // trang này sẽ dùng $get để lấy dữ liệu ra
+    // và gọi hàm searchProducts bên trang searchControl
+    // rồi bấm qua searchControl.php xem đi nào :)
     $search = $_GET['Search'];
     $datas = searchProducts($search);
 }
@@ -40,6 +48,9 @@ if (isset($_GET['btn_post'])) {
     $search1 = $_GET['Search'];
     $catagori = $_GET['catagori'];
     $category = $_GET['category'];
+    // lấy ra các dữ liệu từ cái form ở trang này của ta
+    // và gọi cái hàm searchProducts bên trang searchControl truyền vào
+    // đầy đủ 3 tham số của nó luôn :v
     $datas = searchProducts($search1, $catagori, $category);
 }
 ?>
@@ -104,8 +115,13 @@ if (isset($_GET['btn_post'])) {
 					<div class="col-md-8">
 						<div class="product_list">
 							<div class="row">
+							<!-- Nếu cái data của ta nó rổng nghĩa là người dùng chưa tìm kiếm gì cả -->
+						<!-- Thì ta sẽ hiện cái hình và dòng chữ cho người dùng thấy-->
                                 <?php if (count($datas) != 0) {?>
-                                    <?php foreach ($datas as $item) {?>
+                        <!-- Còn không thì sẽ chạy vòng lặp-->
+						<!-- Để hiển thị ra các sản phẩm tìm kiếm được  -->
+						<!-- Ở trong database của ta -->
+						            <?php foreach ($datas as $item) {?>
                                     <div class="col-lg-6 col-sm-6">
 									<div class="single_product_item">
 										<img
