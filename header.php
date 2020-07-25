@@ -1,4 +1,6 @@
-<?php session_start();?>
+<?php session_start();
+ob_start();
+?>
 <!-- Preloader Start -->
 <div id="preloader-active">
 	<div class="preloader d-flex align-items-center justify-content-center">
@@ -91,8 +93,11 @@
 										<li><a href="index.php">Home</a></li>
 										<li><a href="Catagori.php">Catagori</a></li>
 										<li><a href="product_list.php"> Product list</a></li>
-
 										<li><a href="contact.php">Contact</a></li>
+										<!-- như đã nói ở những phần trước thì ta sẽ sữ dụng -->
+										<!-- session để lưu trữ phiên đăng nhập của nguời dùng  -->
+										<!-- nếu session đã được khởi tạo thì có nghĩa là người dùng đã đăng nhập -->
+										<!-- nếu không thì có nghĩa là chưa đăng nhập thui :) -->
 										<?php if (isset($_SESSION['user'])) {?>
 										<li class="hot">
 											<a href="#"><?php echo $_SESSION['user'] ?></a>
@@ -100,6 +105,9 @@
 												<li><a href="logout.php">Đăng xuất</a></li>
 											</ul>
 										</li>
+										<!-- xuất hiện nút đăng xuất khi người dùng đăng nhập thành công -->
+										<!-- nếu session có thì cho phép người dùng đăng xuất -->
+										<!-- cái nút đăng xuất là thẻ a nó sẽ dẫn người dùng đến trang logout -->
 										<?php }?>
 									</ul>
 								</nav>
@@ -140,6 +148,9 @@
 									<a href="login.php" class="btn header-btn">Sign in</a>
 								</li>
 								<?php }?>
+								<!-- Còn ở đây thì nếu chưa đăng nhập thì nó sẽ hiện nút sign in -->
+								<!-- Để cho người dùng có thể đăng nhập được -->
+								<!-- Nó là thẻ a cũng hướng người dùng đến trang login để người dùng đăng kí hoặc đăng nhập -->
 							</ul>
 						</div>
 						<!-- Mobile Menu -->
